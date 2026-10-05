@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.data_processor.main import load_csv, remove_duplicates
+from src.data_processor.main import load_csv, remove_duplicates, drop_missing
 
 def test_load_csv_reads_file(tmp_path):
     csv_file = tmp_path / 'tiny.csv'
@@ -24,3 +24,16 @@ def test_remove_duplicates_collapses_identical_rows():
     assert len(result) == 3
     assert result['name'].tolist() == ['Alice', 'Bob', 'Andrew']
     assert result['id'].tolist() == [0, 1, 2]
+
+
+def test_drop_missing_removes_rows_with_nan():
+    df = pd.DataFrame({
+        'id': [0, 1, None, None, 4],
+        'name': ['Alice', 'Bob', None, 'Andrew', 'Stephan']
+    })
+
+    result = drop_missing(df)
+
+    assert len(result) == 3
+    assert result['name'].tolist() == ['Alice', 'Bob', 'Stephan']
+    assert result['id'].tolist() == [0, 1, 4]
