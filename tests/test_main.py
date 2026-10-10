@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.data_processor.main import load_csv, remove_duplicates, drop_missing, fill_missing
+from src.data_processor.main import load_csv, remove_duplicates, drop_missing, fill_missing, summary_stats
 
 def test_load_csv_reads_file(tmp_path):
     csv_file = tmp_path / 'tiny.csv'
@@ -50,3 +50,15 @@ def test_fill_missing_replaces_nan_with_value():
     assert len(result) == 3
     assert result['id'].tolist() == [1, 2, 3]
     assert result['name'].tolist() == ['Alice', 'Unknown', 'Andrew']
+
+
+def test_summary_stats_returns_shape():
+    df = pd.DataFrame({
+        'a': [1, 2, 3],
+        'b': ['x', 'y', 'z']
+    })
+
+    result = summary_stats(df)
+
+    assert result['rows'] == 3
+    assert result['columns'] == 2

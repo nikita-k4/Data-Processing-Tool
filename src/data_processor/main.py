@@ -14,6 +14,12 @@ def drop_missing(df: pd.DataFrame) -> pd.DataFrame:
 def fill_missing(df: pd.DataFrame, value: object) -> pd.DataFrame:
     return df.fillna(value).reset_index(drop=True)
 
+def summary_stats(df: pd.DataFrame) -> dict:
+    return {
+        'rows': len(df),
+        'columns': len(df.columns),
+    }
+
 def main() -> None:
     path = Path("data/sample.csv")
     df = load_csv(path)
@@ -35,7 +41,9 @@ def main() -> None:
     print(f"Shape: {df_dropped.shape}")
     print(df_dropped)
 
-    print(df.head())
+    print("--- Summary of the filled data ---")
+    stats = summary_stats(df_filled)
+    print(stats)
 
 
 if __name__ == '__main__':
