@@ -11,6 +11,9 @@ def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
 def drop_missing(df: pd.DataFrame) -> pd.DataFrame:
     return df.dropna().reset_index(drop=True)
 
+def fill_missing(df: pd.DataFrame, value: object) -> pd.DataFrame:
+    return df.fillna(value).reset_index(drop=True)
+
 def main() -> None:
     path = Path("data/sample.csv")
     df = load_csv(path)
@@ -19,10 +22,19 @@ def main() -> None:
 
     df = remove_duplicates(df)
     print(f'Shape removing duplicates: {df.shape}')
+    print()
 
-    df = drop_missing(df)
-    print(f'Shape dropping missing: {df.shape}')
-    
+    print("--- Option 1: fill missing with 0 ---")
+    df_filled = fill_missing(df, value=0)
+    print(f"Shape: {df_filled.shape}")
+    print(df_filled)
+    print()
+
+    print("--- Option 2: drop rows with missing ---")
+    df_dropped = drop_missing(df)
+    print(f"Shape: {df_dropped.shape}")
+    print(df_dropped)
+
     print(df.head())
 
 

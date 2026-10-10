@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.data_processor.main import load_csv, remove_duplicates, drop_missing
+from src.data_processor.main import load_csv, remove_duplicates, drop_missing, fill_missing
 
 def test_load_csv_reads_file(tmp_path):
     csv_file = tmp_path / 'tiny.csv'
@@ -37,3 +37,16 @@ def test_drop_missing_removes_rows_with_nan():
     assert len(result) == 3
     assert result['name'].tolist() == ['Alice', 'Bob', 'Stephan']
     assert result['id'].tolist() == [0, 1, 4]
+
+
+def test_fill_missing_replaces_nan_with_value():
+    df = pd.DataFrame({
+        'id': [1, 2, 3],
+        'name': ['Alice', None, 'Andrew']
+    })
+
+    result = fill_missing(df, value='Unknown')
+
+    assert len(result) == 3
+    assert result['id'].tolist() == [1, 2, 3]
+    assert result['name'].tolist() == ['Alice', 'Unknown', 'Andrew']
