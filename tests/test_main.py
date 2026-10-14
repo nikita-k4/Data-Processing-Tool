@@ -54,11 +54,16 @@ def test_fill_missing_replaces_nan_with_value():
 
 def test_summary_stats_returns_shape():
     df = pd.DataFrame({
-        'a': [1, 2, 3],
-        'b': ['x', 'y', 'z']
+        'a': [1, 2, None],
+        'b': ['x', None, 'z']
     })
 
     result = summary_stats(df)
+    details = result['column_details']
 
     assert result['rows'] == 3
     assert result['columns'] == 2
+    assert details['a']['missing'] == 1
+    assert details['a']['non_missing'] == 2
+    assert details['b']['missing'] == 1
+    assert details['b']['non_missing'] == 2
