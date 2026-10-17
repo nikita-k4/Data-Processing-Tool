@@ -33,6 +33,9 @@ def summary_stats(df: pd.DataFrame) -> dict:
     }
 
 
+def save_csv(df: pd.DataFrame, path:Path) -> None:
+    df.to_csv(path, index=False)
+
 def format_stats(stats: dict) -> str:
     lines = []
     lines.append("Summary")
@@ -63,20 +66,23 @@ def main() -> None:
     print()
 
     print("--- Option 1: fill missing with 0 ---")
-    df_filled = fill_missing(df, value=0)
-    print(f"Shape: {df_filled.shape}")
-    print(df_filled)
+    df = fill_missing(df, value=0)
+    print(f"Shape: {df.shape}")
+    print(df)
     print()
 
-    print("--- Option 2: drop rows with missing ---")
-    df_dropped = drop_missing(df)
-    print(f"Shape: {df_dropped.shape}")
-    print(df_dropped)
+    #print("--- Option 2: drop rows with missing ---")
+    #df = drop_missing(df)
+    #print(f"Shape: {df.shape}")
+    #print(df)
 
-    stats = summary_stats(df_filled)
+    stats = summary_stats(df)
     stats_formatted = format_stats(stats)
     print(stats_formatted)
 
+    output_path = Path("data/cleaned.csv")
+    save_csv(df, output_path)
+    print(f"Saved cleaned data to {output_path}")
 
 if __name__ == '__main__':
     main()

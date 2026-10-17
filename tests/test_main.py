@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.data_processor.main import load_csv, remove_duplicates, drop_missing, fill_missing, summary_stats, format_stats
+from src.data_processor.main import load_csv, remove_duplicates, drop_missing, fill_missing, summary_stats, format_stats, save_csv
 
 def test_load_csv_reads_file(tmp_path):
     csv_file = tmp_path / 'tiny.csv'
@@ -91,3 +91,30 @@ def test_format_stats_return_lines_with_rows_columns_and_details():
     assert 'b' in text
     assert 'int64' in text
     assert 'object' in text
+
+
+def test_save_csv_writes_dataframe_to_file(tmp_path):
+    df = pd.DataFrame({
+        'id':   [1, 2, 3],
+        'name': ['Alice', 'Bob', 'Carol'],
+    })
+
+    output_path = tmp_path / 'out.csv'
+    save_csv(df, output_path)
+
+    assert output_path.exists()
+
+    loaded = pd.read_csv(output_path)
+    assert len(loaded) == 3
+    assert loaded['id'].tolist() == [1, 2, 3]
+    assert loaded['name'].tolist() == ['Alice', 'Bob', 'Carol']
+
+
+def test_save_csv_excludes_index_column(tmp_path):
+    df = pd.DataFrame({'a': [1, 2]})
+    output_path = tmp_path / 'out.csv'
+
+    save_csv(df, output_path)
+    loaded = pd.read_csv(output_path)
+
+    assert list(loaded.columns) == ['a']
