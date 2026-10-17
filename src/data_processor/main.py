@@ -32,6 +32,26 @@ def summary_stats(df: pd.DataFrame) -> dict:
         'column_details': column_details,
     }
 
+
+def format_stats(stats: dict) -> str:
+    lines = []
+    lines.append("Summary")
+    lines.append("=======")
+    lines.append(f"Rows: {stats['rows']}")
+    lines.append(f"Columns: {stats['columns']}")
+    lines.append("")
+    lines.append("Column details:")
+    for col_name, details in stats['column_details'].items():
+        lines.append(
+            f"  {col_name:<6} "
+            f"dtype={details['dtype']:<8}"
+            f"non_missing={details['non_missing']:<3}"
+            f"missing={details['missing']}"
+        )
+
+    return "\n".join(lines)
+
+
 def main() -> None:
     path = Path("data/sample.csv")
     df = load_csv(path)
@@ -53,9 +73,9 @@ def main() -> None:
     print(f"Shape: {df_dropped.shape}")
     print(df_dropped)
 
-    print("--- Summary of the filled data ---")
     stats = summary_stats(df_filled)
-    print(stats)
+    stats_formatted = format_stats(stats)
+    print(stats_formatted)
 
 
 if __name__ == '__main__':

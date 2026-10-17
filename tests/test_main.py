@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.data_processor.main import load_csv, remove_duplicates, drop_missing, fill_missing, summary_stats
+from src.data_processor.main import load_csv, remove_duplicates, drop_missing, fill_missing, summary_stats, format_stats
 
 def test_load_csv_reads_file(tmp_path):
     csv_file = tmp_path / 'tiny.csv'
@@ -52,7 +52,7 @@ def test_fill_missing_replaces_nan_with_value():
     assert result['name'].tolist() == ['Alice', 'Unknown', 'Andrew']
 
 
-def test_summary_stats_returns_shape():
+def test_summary_stats_returns_rows_columns_and_details():
     df = pd.DataFrame({
         'a': [1, 2, None],
         'b': ['x', None, 'z']
@@ -67,3 +67,27 @@ def test_summary_stats_returns_shape():
     assert details['a']['non_missing'] == 2
     assert details['b']['missing'] == 1
     assert details['b']['non_missing'] == 2
+
+
+def test_format_stats_return_lines_with_rows_columns_and_details():
+    stats = {
+        'rows': 3,
+        'columns': 2,
+        'column_details':{
+            'a': {'dtype': 'int64',  'non_missing': 3, 'missing': 0},
+            'b': {'dtype': 'object', 'non_missing': 2, 'missing': 1},
+        }
+    }
+
+    text = format_stats(stats)
+
+    assert 'Summary' in text
+    assert 'Rows:' in text
+    assert '3' in text
+    assert 'Columns:' in text
+    assert '2' in text
+
+    assert 'a' in text
+    assert 'b' in text
+    assert 'int64' in text
+    assert 'object' in text
