@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.data_processor.main import load_csv, remove_duplicates, drop_missing, fill_missing, summary_stats, format_stats, save_csv
+from src.data_processor.main import *
 
 def test_load_csv_reads_file(tmp_path):
     csv_file = tmp_path / 'tiny.csv'
@@ -118,3 +118,29 @@ def test_save_csv_excludes_index_column(tmp_path):
     loaded = pd.read_csv(output_path)
 
     assert list(loaded.columns) == ['a']
+
+
+def test_load_json_reads_file(tmp_path):
+    json_file = tmp_path / 'tiny.json'
+    json_file.write_text('[{"id": 1, "name": "Alice"}, {"id": 2, "name": "Bob"}]')
+
+    df = load_json(json_file)
+
+    assert isinstance(df, pd.DataFrame)
+    assert len(df) == 2
+    assert list(df.columns) == ['id', 'name']
+
+
+def test_save_json_writes_dataFrame(tmp_path):
+    df = pd.DataFrame({
+        'id': [1, 2, 3],
+        'name': ['Alice', 'Bob', 'Carol'],
+    })
+
+    output_path = tmp_path / 'out.json'
+    save_json(df, output_path)
+
+    loaded = pd.read_json(output_path)
+    assert len(loaded) == 3
+    assert loaded['id'].tolist() == [1, 2, 3]
+    assert loaded['name'].tolist() == ['Alice', 'Bob', 'Carol']
