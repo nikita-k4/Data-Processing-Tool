@@ -1,4 +1,5 @@
 from pathlib import Path
+from src.data_processor.core.cleaning import *
 
 import pandas as pd
 
@@ -8,14 +9,6 @@ def load_csv(path: Path) -> pd.DataFrame:
 def load_json(path:Path) -> pd.DataFrame:
     return pd.read_json(path)
 
-def remove_duplicates(df: pd.DataFrame) -> pd.DataFrame:
-    return df.drop_duplicates().reset_index(drop=True)
-
-def drop_missing(df: pd.DataFrame) -> pd.DataFrame:
-    return df.dropna().reset_index(drop=True)
-
-def fill_missing(df: pd.DataFrame, value: object) -> pd.DataFrame:
-    return df.fillna(value).reset_index(drop=True)
 
 def summary_stats(df: pd.DataFrame) -> dict:
     non_missing_counts = df.notna().sum()
