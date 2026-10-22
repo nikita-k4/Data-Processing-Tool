@@ -1,40 +1,10 @@
 from pathlib import Path
-from src.data_processor.core.cleaning import *
-from src.data_processor.core.statistics import *
 
-import pandas as pd
+from src.data_processor.core.cleaning import remove_duplicates, drop_missing, fill_missing
+from src.data_processor.core.statistics import summary_stats, format_stats
+from src.data_processor.io.readers import load_csv, load_json
+from src.data_processor.io.writers import save_csv, save_json
 
-def load_csv(path: Path) -> pd.DataFrame:
-    return pd.read_csv(path)
-
-def load_json(path:Path) -> pd.DataFrame:
-    return pd.read_json(path)
-
-
-def save_csv(df: pd.DataFrame, path:Path) -> None:
-    df.to_csv(path, index=False)
-
-
-def save_json(df: pd.DataFrame, path:Path) -> None:
-    df.to_json(path, orient='records', indent=2)
-
-def format_stats(stats: dict) -> str:
-    lines = []
-    lines.append("Summary")
-    lines.append("=======")
-    lines.append(f"Rows: {stats['rows']}")
-    lines.append(f"Columns: {stats['columns']}")
-    lines.append("")
-    lines.append("Column details:")
-    for col_name, details in stats['column_details'].items():
-        lines.append(
-            f"  {col_name:<6} "
-            f"dtype={details['dtype']:<8}"
-            f"non_missing={details['non_missing']:<3}"
-            f"missing={details['missing']}"
-        )
-
-    return "\n".join(lines)
 
 
 def main() -> None:
@@ -77,6 +47,7 @@ def main() -> None:
 
     save_csv(df_json, Path("data/cleaned_from_json.csv"))
     save_json(df_json, Path("data/cleaned_from_json.json"))
+
 
 if __name__ == '__main__':
     main()
