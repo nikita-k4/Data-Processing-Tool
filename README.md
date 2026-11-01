@@ -70,12 +70,12 @@ pytest tests -v
 
 ## Current Status
 
-☑ Read CSV / JSON
-☑ Cleaning: duplicates, missing values (drop / fill)
-☑ Summary statistics per column
-☑ Formatted report output
-☑ Save to CSV / JSON
-☑ Modular structure (io / core)
-□ CLI with arguments (argparse)
-□ Extended statistics (mean, median, std)
-□ Friendly error handling
+- [x] Read CSV / JSON
+- [x] Cleaning: duplicates, missing values (drop / fill)
+- [x] Summary statistics per column
+- [x] Formatted report output
+- [x] Save to CSV / JSON
+- [x] Modular structure (io / core)
+- [ ] CLI with arguments (argparse)
+- [ ] Extended statistics (mean, median, std)
+- [ ] Friendly error handling
