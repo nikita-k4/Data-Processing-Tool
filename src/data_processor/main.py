@@ -1,53 +1,64 @@
+"""Entry point for the sample data-processing pipeline.
+
+Reads the bundled samples from ``data/``, cleans them, prints a summary and
+writes the cleaned results back to that directory.
+
+This module only orchestrates: every step lives in ``core/`` (pure DataFrame
+operations) or ``io/`` (file reading and writing).
+"""
+
 from pathlib import Path
 
-from src.data_processor.core.cleaning import remove_duplicates, drop_missing, fill_missing
-from src.data_processor.core.statistics import summary_stats, format_stats
+from src.data_processor.core.cleaning import drop_missing, fill_missing, remove_duplicates
+from src.data_processor.core.statistics import format_stats, summary_stats
 from src.data_processor.io.readers import load_csv, load_json
 from src.data_processor.io.writers import save_csv, save_json
 
+__all__ = [
+    "main",
+    "load_csv",
+    "load_json",
+    "save_csv",
+    "save_json",
+    "remove_duplicates",
+    "drop_missing",
+    "fill_missing",
+    "summary_stats",
+    "format_stats",
+]
 
 
 def main() -> None:
-    path_csv = Path("data/sample.csv")
-    df = load_csv(path_csv)
-    print(f'Loaded {path_csv}')
-    print(f'Initial shape: {df.shape}')
+    """Run the sample CSV and JSON pipelines end to end."""
+    csv_path = Path("data/sample.csv")
+    df = load_csv(csv_path)
+    print(f"Loaded {csv_path}")
+    print(f"CSV initial shape: {df.shape}")
 
     df = remove_duplicates(df)
-    print(f'Shape removing duplicates: {df.shape}')
-    print()
-
-    print("--- Option 1: fill missing with 0 ---")
     df = fill_missing(df, value=0)
-    print(f"Shape: {df.shape}")
+    print(f"CSV shape after cleaning: {df.shape}")
     print(df)
     print()
+    print(format_stats(summary_stats(df)))
 
-    #print("--- Option 2: drop rows with missing ---")
-    #df = drop_missing(df)
-    #print(f"Shape: {df.shape}")
-    #print(df)
-
-    stats = summary_stats(df)
-    stats_formatted = format_stats(stats)
-    print(stats_formatted)
-
-    output_path = Path("data/cleaned.csv")
-    save_csv(df, output_path)
+    save_csv(df, Path("data/cleaned.csv"))
     save_json(df, Path("data/cleaned.json"))
-    print(f"Saved cleaned data to {output_path}")
 
-    path_json = Path("data/sample.json")
-    df_json = load_json(path_json)
-    print(f"Loaded {path_json}")
-    print(f"Json initial shape: {df_json.shape}")
+    json_path = Path("data/sample.json")
+    df_json = load_json(json_path)
+    print(f"Loaded {json_path}")
+    print(f"JSON initial shape: {df_json.shape}")
 
     df_json = remove_duplicates(df_json)
     df_json = fill_missing(df_json, value=0)
+    print(f"JSON shape after cleaning: {df_json.shape}")
 
     save_csv(df_json, Path("data/cleaned_from_json.csv"))
     save_json(df_json, Path("data/cleaned_from_json.json"))
 
+    print("Saved cleaned data to data/")
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     main()
